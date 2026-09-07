@@ -7,9 +7,7 @@ import '../../../auth/presentation/providers/auth_provider.dart';
 import '../providers/task_provider.dart';
 import '../../domain/models/task_model.dart';
 
-// ─────────────────────────────────────────────────────────────────────────────
-// Priority enum
-// ─────────────────────────────────────────────────────────────────────────────
+
 enum _Priority { low, medium, high }
 
 extension _PriorityX on _Priority {

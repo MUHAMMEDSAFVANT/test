@@ -30,7 +30,6 @@ class NotificationService {
 
     await _plugin.initialize(initSettings);
 
-    // Request Android 13+ permission
     await _plugin
         .resolvePlatformSpecificImplementation<
             AndroidFlutterLocalNotificationsPlugin>()
