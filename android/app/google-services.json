@@ -1,0 +1,46 @@
+{
+  "project_info": {
+    "project_number": "455173571371",
+    "project_id": "rendhome-7ffd3",
+    "storage_bucket": "rendhome-7ffd3.firebasestorage.app"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:455173571371:android:46102b20fcc674250d3b6e",
+        "android_client_info": {
+          "package_name": "com.example.rendhoe"
+        }
+      },
+      "oauth_client": [
+        {
+          "client_id": "455173571371-u18d0r5f9s7i15qeok5plsmcl5k859qi.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
+      "api_key": [
+        {
+          "current_key": "AIzaSyCWAIIIBMZCTiUxFL8xr6TU5OYhHZ0V1qI"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": [
+            {
+              "client_id": "455173571371-u18d0r5f9s7i15qeok5plsmcl5k859qi.apps.googleusercontent.com",
+              "client_type": 3
+            },
+            {
+              "client_id": "455173571371-ena0vemsjuf918locd5at9g83c0rsin2.apps.googleusercontent.com",
+              "client_type": 2,
+              "ios_info": {
+                "bundle_id": "com.example.rendhoe"
+              }
+            }
+          ]
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}
