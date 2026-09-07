@@ -4,11 +4,14 @@ import 'package:flutter/foundation.dart';
 
 import '../../domain/models/task_model.dart';
 import '../../domain/repositories/task_repository.dart';
+import '../../../../services/local_task_storage.dart';
+import '../../../../services/notification_service.dart';
 
 enum TaskStatus { initial, loading, loaded, error }
 
 class TaskProvider extends ChangeNotifier {
-  TaskProvider({required TaskRepository this._repository});
+  TaskProvider({required TaskRepository repository})
+      : _repository = repository;
 
   final TaskRepository _repository;
 
@@ -16,24 +19,42 @@ class TaskProvider extends ChangeNotifier {
   TaskStatus _status = TaskStatus.initial;
   String? _errorMessage;
   StreamSubscription<List<TaskModel>>? _subscription;
+  String? _activeUid;
 
   List<TaskModel> get tasks => _tasks;
   TaskStatus get status => _status;
   String? get errorMessage => _errorMessage;
 
-  void startListening(String uid) {
-    _subscription?.cancel();
-    _status = TaskStatus.loading;
-    notifyListeners();
+  // ── Start: load cache first, then stream from Firestore ───────────────────
+
+  Future<void> startListening(String uid) async {
+    if (_activeUid == uid && _subscription != null) return;
+    await _subscription?.cancel();
+    _activeUid = uid;
+
+    // 1. Show cached tasks immediately so the list is visible on restart
+    final cached = await LocalTaskStorage.load(uid);
+    if (cached.isNotEmpty) {
+      _tasks = cached;
+      _status = TaskStatus.loaded;
+      notifyListeners();
+    } else {
+      _status = TaskStatus.loading;
+      notifyListeners();
+    }
+
+    // 2. Stream live updates from Firestore and keep cache in sync
     _subscription = _repository.streamTasks(uid).listen(
       (tasks) {
         _tasks = tasks;
         _status = TaskStatus.loaded;
+        LocalTaskStorage.save(uid, tasks); // persist fresh data
         notifyListeners();
       },
       onError: (Object e) {
         _errorMessage = e.toString();
-        _status = TaskStatus.error;
+        // Keep showing cached tasks even when offline
+        if (_tasks.isEmpty) _status = TaskStatus.error;
         notifyListeners();
       },
     );
@@ -42,10 +63,13 @@ class TaskProvider extends ChangeNotifier {
   void stopListening() {
     _subscription?.cancel();
     _subscription = null;
+    _activeUid = null;
     _tasks = [];
     _status = TaskStatus.initial;
     notifyListeners();
   }
+
+  // ── CRUD ──────────────────────────────────────────────────────────────────
 
   Future<void> addTask({
     required String uid,
@@ -60,6 +84,8 @@ class TaskProvider extends ChangeNotifier {
       createdAt: DateTime.now(),
     );
     await _repository.addTask(task);
+    // Firestore stream will update _tasks; fire notification independently
+    await NotificationService.instance.showTaskAdded(title.trim());
   }
 
   Future<void> updateTask({
@@ -82,7 +108,20 @@ class TaskProvider extends ChangeNotifier {
   }
 
   Future<void> deleteTask(String id) async {
+    // Capture the title before deletion for the notification
+    final title = _tasks.firstWhere(
+      (t) => t.id == id,
+      orElse: () => TaskModel(
+        id: id,
+        uid: '',
+        title: 'Task',
+        description: '',
+        createdAt: DateTime.now(),
+      ),
+    ).title;
+
     await _repository.deleteTask(id);
+    await NotificationService.instance.showTaskDeleted(title);
   }
 
   @override

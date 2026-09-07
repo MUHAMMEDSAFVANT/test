@@ -55,4 +55,28 @@ class TaskModel {
           : DateTime.now(),
     );
   }
+
+  // ── Local storage (JSON) ───────────────────────────────────────────────────
+
+  Map<String, dynamic> toJson() => {
+        'id': id,
+        'uid': uid,
+        'title': title,
+        'description': description,
+        'isDone': isDone,
+        'createdAt': createdAt.millisecondsSinceEpoch,
+      };
+
+  factory TaskModel.fromJson(Map<String, dynamic> json) {
+    return TaskModel(
+      id: json['id'] as String? ?? '',
+      uid: json['uid'] as String? ?? '',
+      title: json['title'] as String? ?? '',
+      description: json['description'] as String? ?? '',
+      isDone: json['isDone'] as bool? ?? false,
+      createdAt: json['createdAt'] != null
+          ? DateTime.fromMillisecondsSinceEpoch(json['createdAt'] as int)
+          : DateTime.now(),
+    );
+  }
 }

@@ -7,6 +7,5 @@ abstract class AuthRepository {
 
   Future<User> signInWithGoogle();
 
-  /// Sign out.
   Future<void> signOut();
 }
