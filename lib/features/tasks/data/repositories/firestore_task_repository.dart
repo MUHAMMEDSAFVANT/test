@@ -16,12 +16,15 @@ class FirestoreTaskRepository implements TaskRepository {
   Stream<List<TaskModel>> streamTasks(String uid) {
     return _tasks
         .where('uid', isEqualTo: uid)
-        .orderBy('createdAt', descending: true)
         .snapshots()
         .map(
-          (snap) => snap.docs
-              .map((doc) => TaskModel.fromMap(doc.data(), doc.id))
-              .toList(),
+          (snap) {
+            final list = snap.docs
+                .map((doc) => TaskModel.fromMap(doc.data(), doc.id))
+                .toList();
+            list.sort((a, b) => b.createdAt.compareTo(a.createdAt));
+            return list;
+          },
         );
   }
 

@@ -45,7 +45,6 @@ class _AddEditTaskScreenState extends State<AddEditTaskScreen>
   late final TextEditingController _descCtrl;
 
   _Priority _priority = _Priority.medium;
-  bool _isSaving = false;
 
   late final AnimationController _btnAnim;
   late final Animation<double> _btnScale;
@@ -86,23 +85,23 @@ class _AddEditTaskScreenState extends State<AddEditTaskScreen>
     await _btnAnim.forward();
     await _btnAnim.reverse();
 
-    setState(() => _isSaving = true);
     try {
       if (!mounted) return;
       final taskProv = context.read<TaskProvider>();
       final uid = context.read<AuthProvider>().user!.uid;
 
       if (_isEditing) {
-        await taskProv.updateTask(
-          task: widget.existingTask!,
-          title: _titleCtrl.text.trim(),
-          description: _descCtrl.text.trim(),
-        );
+        // await taskProv.updateTask(
+        //   task: widget.existingTask!,
+        //   title: _titleCtrl.text.trim(),
+        //   description: _descCtrl.text.trim(),
+        // );
       } else {
         await taskProv.addTask(
           uid: uid,
           title: _titleCtrl.text.trim(),
           description: _descCtrl.text.trim(),
+          createdAt: DateTime.timestamp(),
         );
       }
       if (mounted) Navigator.pop(context);
@@ -132,13 +131,12 @@ class _AddEditTaskScreenState extends State<AddEditTaskScreen>
           ),
         );
       }
-    } finally {
-      if (mounted) setState(() => _isSaving = false);
     }
   }
 
   @override
   Widget build(BuildContext context) {
+     final isSaving = context.watch<TaskProvider>().isSaving;
     return Scaffold(
       backgroundColor: const Color(0xFFF5F5F7),
       body: Column(
@@ -179,7 +177,7 @@ class _AddEditTaskScreenState extends State<AddEditTaskScreen>
                       ],
                     ),
                     SizedBox(height: 32.h),
-                    _buildSaveButton(),
+                    _buildSaveButton(isSaving),
                   ],
                 ),
               ),
@@ -389,13 +387,13 @@ class _AddEditTaskScreenState extends State<AddEditTaskScreen>
     );
   }
 
-  Widget _buildSaveButton() {
+  Widget _buildSaveButton(bool isSaving) {
     return ScaleTransition(
       scale: _btnScale,
       child: SizedBox(
         height: 56.h,
         child: ElevatedButton(
-          onPressed: _isSaving ? null : _save,
+          onPressed: isSaving ? null : _save,
           style: ElevatedButton.styleFrom(
             backgroundColor: const Color(0xFFD6336C),
             disabledBackgroundColor:
@@ -406,7 +404,7 @@ class _AddEditTaskScreenState extends State<AddEditTaskScreen>
             elevation: 4,
             shadowColor: const Color(0xFFD6336C).withValues(alpha: 0.4),
           ),
-          child: _isSaving
+          child: isSaving
               ? SizedBox(
                   width: 22.w,
                   height: 22.w,

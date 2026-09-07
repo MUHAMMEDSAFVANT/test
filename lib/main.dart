@@ -50,7 +50,7 @@ class TaskNestApp extends StatelessWidget {
             splitScreenMode: true,
             builder: (_, child) {
               return MaterialApp(
-                title: 'task',
+                title: 'MyApp',
                 debugShowCheckedModeBanner: false,
                 theme: AppTheme.light.copyWith(
                   textTheme: GoogleFonts.poppinsTextTheme(
