@@ -7,7 +7,6 @@ import '../../../auth/presentation/providers/auth_provider.dart';
 import '../providers/task_provider.dart';
 import '../../domain/models/task_model.dart';
 
-
 enum _Priority { low, medium, high }
 
 extension _PriorityX on _Priority {
@@ -30,9 +29,6 @@ extension _PriorityX on _Priority {
       };
 }
 
-// ─────────────────────────────────────────────────────────────────────────────
-// Screen
-// ─────────────────────────────────────────────────────────────────────────────
 class AddEditTaskScreen extends StatefulWidget {
   const AddEditTaskScreen({super.key, this.existingTask});
 
@@ -58,7 +54,6 @@ class _AddEditTaskScreenState extends State<AddEditTaskScreen>
 
   bool get _isEditing => widget.existingTask != null;
 
-  // ── life-cycle ──────────────────────────────────────────────────────────────
   @override
   void initState() {
     super.initState();
@@ -74,7 +69,6 @@ class _AddEditTaskScreenState extends State<AddEditTaskScreen>
       CurvedAnimation(parent: _btnAnim, curve: Curves.easeInOut),
     );
 
-    // keep counter refreshing
     _titleCtrl.addListener(() => setState(() {}));
   }
 
@@ -86,7 +80,6 @@ class _AddEditTaskScreenState extends State<AddEditTaskScreen>
     super.dispose();
   }
 
-  // ── save logic ───────────────────────────────────────────────────────────────
   Future<void> _save() async {
     if (!_formKey.currentState!.validate()) return;
 
@@ -119,8 +112,8 @@ class _AddEditTaskScreenState extends State<AddEditTaskScreen>
           SnackBar(
             behavior: SnackBarBehavior.floating,
             margin: EdgeInsets.symmetric(horizontal: 20.w, vertical: 12.h),
-            shape:
-                RoundedRectangleBorder(borderRadius: BorderRadius.circular(12.r)),
+            shape: RoundedRectangleBorder(
+                borderRadius: BorderRadius.circular(12.r)),
             backgroundColor: Colors.red.shade600,
             content: Row(
               children: [
@@ -144,7 +137,6 @@ class _AddEditTaskScreenState extends State<AddEditTaskScreen>
     }
   }
 
-  // ── build ────────────────────────────────────────────────────────────────────
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -198,7 +190,6 @@ class _AddEditTaskScreenState extends State<AddEditTaskScreen>
     );
   }
 
-  // ── header ────────────────────────────────────────────────────────────────
   Widget _buildHeader() {
     return Container(
       decoration: const BoxDecoration(
@@ -214,7 +205,6 @@ class _AddEditTaskScreenState extends State<AddEditTaskScreen>
           padding: EdgeInsets.symmetric(horizontal: 8.w, vertical: 8.h),
           child: Row(
             children: [
-              // back button
               IconButton(
                 icon: const Icon(Icons.arrow_back_ios_new_rounded,
                     color: Colors.white),
@@ -244,7 +234,6 @@ class _AddEditTaskScreenState extends State<AddEditTaskScreen>
                   ],
                 ),
               ),
-              // decorative icon badge
               Container(
                 width: 42.w,
                 height: 42.w,
@@ -268,7 +257,6 @@ class _AddEditTaskScreenState extends State<AddEditTaskScreen>
     );
   }
 
-  // ── card wrapper ──────────────────────────────────────────────────────────
   Widget _buildCard({required List<Widget> children}) {
     return Container(
       width: double.infinity,
@@ -291,14 +279,13 @@ class _AddEditTaskScreenState extends State<AddEditTaskScreen>
     );
   }
 
-  // ── title field ───────────────────────────────────────────────────────────
   Widget _buildTitleField() {
     return TextFormField(
       controller: _titleCtrl,
       maxLines: 1,
       maxLength: _maxTitle,
       buildCounter: (_, {required currentLength, required isFocused, maxLength}) =>
-          const SizedBox.shrink(), // we draw our own counter
+          const SizedBox.shrink(),
       textInputAction: TextInputAction.next,
       style: GoogleFonts.poppins(
         fontSize: 15.sp,
@@ -337,7 +324,6 @@ class _AddEditTaskScreenState extends State<AddEditTaskScreen>
     );
   }
 
-  // ── description field ─────────────────────────────────────────────────────
   Widget _buildDescField() {
     return TextFormField(
       controller: _descCtrl,
@@ -357,7 +343,6 @@ class _AddEditTaskScreenState extends State<AddEditTaskScreen>
     );
   }
 
-  // ── priority selector ─────────────────────────────────────────────────────
   Widget _buildPrioritySelector() {
     return Row(
       children: _Priority.values.map((p) {
@@ -404,7 +389,6 @@ class _AddEditTaskScreenState extends State<AddEditTaskScreen>
     );
   }
 
-  // ── save button ───────────────────────────────────────────────────────────
   Widget _buildSaveButton() {
     return ScaleTransition(
       scale: _btnScale,
@@ -457,7 +441,6 @@ class _AddEditTaskScreenState extends State<AddEditTaskScreen>
     );
   }
 
-  // ── shared input decoration ───────────────────────────────────────────────
   InputDecoration _inputDecoration({
     required String hint,
     required Widget prefix,
@@ -465,8 +448,8 @@ class _AddEditTaskScreenState extends State<AddEditTaskScreen>
   }) {
     return InputDecoration(
       hintText: hint,
-      hintStyle: GoogleFonts.poppins(
-          fontSize: 14.sp, color: Colors.grey.shade400),
+      hintStyle:
+          GoogleFonts.poppins(fontSize: 14.sp, color: Colors.grey.shade400),
       prefixIcon: Padding(
         padding: EdgeInsets.symmetric(horizontal: 12.w),
         child: prefix,
@@ -488,8 +471,7 @@ class _AddEditTaskScreenState extends State<AddEditTaskScreen>
       ),
       focusedBorder: OutlineInputBorder(
         borderRadius: BorderRadius.circular(12.r),
-        borderSide:
-            const BorderSide(color: Color(0xFFD6336C), width: 1.8),
+        borderSide: const BorderSide(color: Color(0xFFD6336C), width: 1.8),
       ),
       errorBorder: OutlineInputBorder(
         borderRadius: BorderRadius.circular(12.r),
@@ -499,15 +481,12 @@ class _AddEditTaskScreenState extends State<AddEditTaskScreen>
         borderRadius: BorderRadius.circular(12.r),
         borderSide: BorderSide(color: Colors.red.shade400, width: 1.8),
       ),
-      errorStyle: GoogleFonts.poppins(
-          fontSize: 11.sp, color: Colors.red.shade500),
+      errorStyle:
+          GoogleFonts.poppins(fontSize: 11.sp, color: Colors.red.shade500),
     );
   }
 }
 
-// ─────────────────────────────────────────────────────────────────────────────
-// Small helpers
-// ─────────────────────────────────────────────────────────────────────────────
 class _SectionLabel extends StatelessWidget {
   const _SectionLabel({required this.label});
   final String label;

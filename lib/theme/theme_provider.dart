@@ -1,7 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
-/// Handles switching + persisting Night Mode (dark mode) across app restarts.
 class ThemeProvider extends ChangeNotifier {
   static const _key = 'is_dark_mode';
 

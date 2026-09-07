@@ -16,8 +16,6 @@ class AuthGate extends StatefulWidget {
 }
 
 class _AuthGateState extends State<AuthGate> {
-  /// Tracks whether we already have a locally-cached task list for the
-  /// current user, so we can skip the splash on restart.
   bool _hasCachedTasks = false;
   bool _cacheChecked = false;
   String? _lastCheckedUid;
@@ -26,17 +24,14 @@ class _AuthGateState extends State<AuthGate> {
   Widget build(BuildContext context) {
     final auth = context.watch<AuthProvider>();
 
-    // As soon as we know the user, check the local cache once.
     if (auth.user != null && auth.user!.uid != _lastCheckedUid) {
       _lastCheckedUid = auth.user!.uid;
-      _cacheChecked = false; // reset for new user
+      _cacheChecked = false;
       _checkCache(auth.user!.uid);
     }
 
     switch (auth.status) {
       case AuthStatus.initial:
-        // Already authenticated from a previous session?
-        // Show HomeScreen immediately if we have cached tasks.
         if (_cacheChecked && _hasCachedTasks && auth.user != null) {
           _ensureListening(context, auth.user!.uid);
           return const HomeScreen();
@@ -54,7 +49,6 @@ class _AuthGateState extends State<AuthGate> {
     }
   }
 
-  /// Check local cache for the uid; rebuild once result is known.
   Future<void> _checkCache(String uid) async {
     final cached = await LocalTaskStorage.load(uid);
     if (mounted) {
@@ -65,7 +59,6 @@ class _AuthGateState extends State<AuthGate> {
     }
   }
 
-  /// Start the Firestore stream only if not already active for this uid.
   void _ensureListening(BuildContext context, String uid) {
     final taskProv = context.read<TaskProvider>();
     if (taskProv.status == TaskStatus.initial) {

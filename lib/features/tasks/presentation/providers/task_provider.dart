@@ -25,14 +25,11 @@ class TaskProvider extends ChangeNotifier {
   TaskStatus get status => _status;
   String? get errorMessage => _errorMessage;
 
-  // ── Start: load cache first, then stream from Firestore ───────────────────
-
   Future<void> startListening(String uid) async {
     if (_activeUid == uid && _subscription != null) return;
     await _subscription?.cancel();
     _activeUid = uid;
 
-    // 1. Show cached tasks immediately so the list is visible on restart
     final cached = await LocalTaskStorage.load(uid);
     if (cached.isNotEmpty) {
       _tasks = cached;
@@ -43,17 +40,15 @@ class TaskProvider extends ChangeNotifier {
       notifyListeners();
     }
 
-    // 2. Stream live updates from Firestore and keep cache in sync
     _subscription = _repository.streamTasks(uid).listen(
       (tasks) {
         _tasks = tasks;
         _status = TaskStatus.loaded;
-        LocalTaskStorage.save(uid, tasks); // persist fresh data
+        LocalTaskStorage.save(uid, tasks);
         notifyListeners();
       },
       onError: (Object e) {
         _errorMessage = e.toString();
-        // Keep showing cached tasks even when offline
         if (_tasks.isEmpty) _status = TaskStatus.error;
         notifyListeners();
       },
@@ -69,8 +64,6 @@ class TaskProvider extends ChangeNotifier {
     notifyListeners();
   }
 
-  // ── CRUD ──────────────────────────────────────────────────────────────────
-
   Future<void> addTask({
     required String uid,
     required String title,
@@ -84,7 +77,6 @@ class TaskProvider extends ChangeNotifier {
       createdAt: DateTime.now(),
     );
     await _repository.addTask(task);
-    // Firestore stream will update _tasks; fire notification independently
     await NotificationService.instance.showTaskAdded(title.trim());
   }
 
@@ -108,7 +100,6 @@ class TaskProvider extends ChangeNotifier {
   }
 
   Future<void> deleteTask(String id) async {
-    // Capture the title before deletion for the notification
     final title = _tasks.firstWhere(
       (t) => t.id == id,
       orElse: () => TaskModel(
