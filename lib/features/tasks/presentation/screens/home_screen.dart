@@ -54,7 +54,7 @@ class _HomeScreenState extends State<HomeScreen> {
       ),
     );
     if (confirmed == true && context.mounted) {
-      await context.read<TaskProvider>().deleteTask(task.id);
+      // await context.read<TaskProvider>().deleteTask(task.id);
     }
   }
 
@@ -153,18 +153,18 @@ class _HomeScreenState extends State<HomeScreen> {
             sliver: SliverList(
               delegate: SliverChildBuilderDelegate(
                 (context, index) {
-                  final task = tasks[index];
-                  return _TaskCard(
-                    task: task,
-                    onEdit: () => Navigator.push(
-                      context,
-                      MaterialPageRoute(
-                        builder: (_) => AddEditTaskScreen(existingTask: task),
-                      ),
-                    ),
-                    onDelete: () => _confirmDelete(context, task),
-                    onToggle: () => context.read<TaskProvider>().toggleDone(task),
-                  );
+                  // final task = tasks[index];
+                  // return _TaskCard(
+                  //   task: task,
+                  //   onEdit: () => Navigator.push(
+                  //     context,
+                  //     MaterialPageRoute(
+                  //       builder: (_) => AddEditTaskScreen(existingTask: task),
+                  //     ),
+                  //   ),
+                  //   onDelete: () => _confirmDelete(context, task),
+                  //   // onToggle: () => context.read<TaskProvider>().toggleDone(task),
+                  // );
                 },
                 childCount: tasks.length,
               ),

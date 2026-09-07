@@ -56,6 +56,8 @@ class TaskModel {
     );
   }
 
+  // ── Local storage (JSON) ───────────────────────────────────────────────────
+
   Map<String, dynamic> toJson() => {
         'id': id,
         'uid': uid,

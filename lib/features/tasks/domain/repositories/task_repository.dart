@@ -1,6 +1,7 @@
 import '../models/task_model.dart';
 
 abstract class TaskRepository {
+  /// Live stream of all tasks belonging to [uid], newest first.
   Stream<List<TaskModel>> streamTasks(String uid);
 
   Future<void> addTask(TaskModel task);

@@ -10,7 +10,7 @@ class FirestoreTaskRepository implements TaskRepository {
   final FirebaseFirestore _db;
 
   CollectionReference<Map<String, dynamic>> get _tasks =>
-      _db.collection('tasks');
+      _db.collection('tasks');  
 
   @override
   Stream<List<TaskModel>> streamTasks(String uid) {
